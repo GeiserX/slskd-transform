@@ -1,0 +1,3 @@
+slskd_api
+mutagen
+requests

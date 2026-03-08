@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 200" width="900" height="200">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF6F00"/>
+      <stop offset="100%" style="stop-color:#1A1A2E"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD54F;stop-opacity:0.9"/>
+      <stop offset="100%" style="stop-color:#FF6F00;stop-opacity:0.7"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="200" rx="12" fill="url(#bg)"/>
+
+  <!-- Subtle grid pattern -->
+  <g opacity="0.06">
+    <line x1="0" y1="40" x2="900" y2="40" stroke="#fff" stroke-width="0.5"/>
+    <line x1="0" y1="80" x2="900" y2="80" stroke="#fff" stroke-width="0.5"/>
+    <line x1="0" y1="120" x2="900" y2="120" stroke="#fff" stroke-width="0.5"/>
+    <line x1="0" y1="160" x2="900" y2="160" stroke="#fff" stroke-width="0.5"/>
+  </g>
+
+  <!-- Music note icon (left side) -->
+  <g transform="translate(80, 55)" fill="url(#accent)">
+    <!-- Beamed eighth notes -->
+    <rect x="0" y="0" width="5" height="75" rx="2"/>
+    <rect x="45" y="12" width="5" height="63" rx="2"/>
+    <!-- Beam -->
+    <rect x="0" y="0" width="50" height="7" rx="2" transform="rotate(14, 0, 0)"/>
+    <!-- Note heads -->
+    <ellipse cx="0" cy="80" rx="14" ry="10" transform="rotate(-20, 0, 80)"/>
+    <ellipse cx="45" cy="80" rx="14" ry="10" transform="rotate(-20, 45, 80)"/>
+  </g>
+
+  <!-- Transform arrows -->
+  <g transform="translate(175, 85)" opacity="0.85">
+    <!-- Arrow right -->
+    <path d="M0,10 L35,10 L28,0 L45,15 L28,30 L35,20 L0,20 Z" fill="#FFD54F"/>
+    <!-- Arrow left (below, dimmer) -->
+    <path d="M45,25 L10,25 L17,15 L0,30 L17,45 L10,35 L45,35 Z" fill="#FFD54F" opacity="0.4"/>
+  </g>
+
+  <!-- FLAC badge -->
+  <g transform="translate(175, 130)">
+    <rect width="55" height="24" rx="5" fill="#FFD54F" opacity="0.9"/>
+    <text x="27.5" y="17" text-anchor="middle" font-family="monospace" font-weight="bold" font-size="13" fill="#1A1A2E">FLAC</text>
+  </g>
+
+  <!-- Title -->
+  <text x="270" y="105" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="52" font-weight="bold" fill="#FFFFFF" letter-spacing="-1">slskd-transform</text>
+
+  <!-- Subtitle -->
+  <text x="273" y="140" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="18" fill="#FFD54F" opacity="0.9">Bulk-upgrade your music library from lossy to lossless</text>
+
+  <!-- Decorative waveform (right side) -->
+  <g transform="translate(720, 60)" stroke="#FFD54F" stroke-width="2.5" fill="none" opacity="0.25">
+    <path d="M0,40 Q10,0 20,40 Q30,80 40,40 Q50,0 60,40 Q70,80 80,40 Q90,0 100,40 Q110,80 120,40 Q130,0 140,40"/>
+  </g>
+  <g transform="translate(720, 80)" stroke="#fff" stroke-width="1.5" fill="none" opacity="0.12">
+    <path d="M0,40 Q15,10 30,40 Q45,70 60,40 Q75,10 90,40 Q105,70 120,40 Q135,10 150,40"/>
+  </g>
+</svg>
