@@ -119,6 +119,14 @@ Local library          Soulseek network          Your disk
 4. **Enqueue** -- Matched files are enqueued for download through slskd. Failed or unmatched tracks are logged.
 5. **Rename** -- After downloading, `rename-files.py` walks the download directory, reads FLAC metadata, and moves files into a flat structure with clean filenames.
 
+## Related Music Tools
+
+| Project | Description |
+|---------|-------------|
+| [telegram-slskd-local-bot](https://github.com/GeiserX/telegram-slskd-local-bot) | Automated music discovery and download via Telegram |
+| [audio-transcode-watcher](https://github.com/GeiserX/audio-transcode-watcher) | Automated multi-format audio transcoding with lyrics fetching |
+
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
