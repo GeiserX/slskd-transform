@@ -11,6 +11,7 @@
   <a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.8%2B-blue?style=flat-square&logo=python&logoColor=white" alt="Python 3.8+"></a>
   <a href="https://github.com/slskd/slskd"><img src="https://img.shields.io/badge/requires-slskd-1A1A2E?style=flat-square" alt="Requires slskd"></a>
   <a href="https://github.com/GeiserX/slskd-transform/stargazers"><img src="https://img.shields.io/github/stars/GeiserX/slskd-transform?style=flat-square&color=FFD54F" alt="Stars"></a>
+  <a href="https://codecov.io/gh/GeiserX/slskd-transform"><img src="https://img.shields.io/codecov/c/github/GeiserX/slskd-transform?style=flat-square" alt="Coverage"></a>
 </p>
 
 ---
