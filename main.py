@@ -97,16 +97,22 @@ def threaded_search_and_enqueue(songs_with_duration, unfound_songs, num_threads=
     for thread in thread_list:
         thread.join()
 
-slskd = slskd_api.SlskdClient(host="http://127.0.0.1:5030", api_key="...", verify_ssl=False)
+def main():
+    global slskd
+    slskd = slskd_api.SlskdClient(host="http://127.0.0.1:5030", api_key="...", verify_ssl=False)
 
-current_dir = os.getcwd()
-MUSIC_DIR = os.path.join(current_dir, 'music')
-songs_with_duration = list_files_with_duration(MUSIC_DIR)
+    current_dir = os.getcwd()
+    MUSIC_DIR = os.path.join(current_dir, 'music')
+    songs_with_duration = list_files_with_duration(MUSIC_DIR)
 
-unfound_songs = []
+    unfound_songs = []
 
-threaded_search_and_enqueue(songs_with_duration, unfound_songs)
+    threaded_search_and_enqueue(songs_with_duration, unfound_songs)
 
-if len(unfound_songs) > 0:
-    write_unfound_songs_to_csv(unfound_songs, 'unfound_songs.csv')
-    print("Unfound songs have been written to 'unfound_songs.csv'")
+    if len(unfound_songs) > 0:
+        write_unfound_songs_to_csv(unfound_songs, 'unfound_songs.csv')
+        print("Unfound songs have been written to 'unfound_songs.csv'")
+
+
+if __name__ == '__main__':
+    main()
