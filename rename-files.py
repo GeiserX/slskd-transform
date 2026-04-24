@@ -32,8 +32,13 @@ def move_and_rename_flac_files(flac_files, destination):
         shutil.move(file, new_filepath)
         print(f"Moved and renamed: {new_filepath}")
 
-source_directory = 'G:\\slskd\\downloads'
-destination_directory = 'G:\\slskd\\'
-flac_files = collect_flac_files(source_directory)
+def main():
+    source_directory = 'G:\\slskd\\downloads'
+    destination_directory = 'G:\\slskd\\'
+    flac_files = collect_flac_files(source_directory)
 
-move_and_rename_flac_files(flac_files, destination_directory)
+    move_and_rename_flac_files(flac_files, destination_directory)
+
+
+if __name__ == '__main__':
+    main()
