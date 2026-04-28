@@ -1,4 +1,4 @@
-# AGENTS.md — SLSKD Transform
+# CLAUDE.md — SLSKD Transform
 
 ## Project Overview
 
