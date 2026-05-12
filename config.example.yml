@@ -1,0 +1,19 @@
+# slskd-transform configuration
+# All fields are optional — defaults shown below
+
+# slskd connection
+host: "http://127.0.0.1:5030"
+api_key: ""                         # REQUIRED (or set SLSKD_API_KEY env var)
+verify_ssl: false
+
+# Search settings
+music_dir: "./music"                # Where your lossy source files live
+duration_tolerance: 15              # Seconds of acceptable duration difference
+num_threads: 5                      # Concurrent search threads
+search_timeout: 60                  # Seconds to wait for search results
+format: "flac"                      # Target format (appended to search query)
+recursive: false                    # Scan music_dir recursively
+
+# Rename settings
+source_dir: "./downloads"           # Where slskd puts completed downloads
+destination_dir: "./organized"      # Where renamed FLACs are moved to

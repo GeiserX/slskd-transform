@@ -1,0 +1,37 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "slskd-transform"
+version = "2.0.0"
+description = "Bulk-upgrade your music library from lossy to lossless via Soulseek"
+readme = "README.md"
+license = "GPL-3.0-only"
+requires-python = ">=3.10"
+authors = [
+    { name = "GeiserX" },
+]
+dependencies = [
+    "slskd-api>=0.1.5",
+    "mutagen>=1.47",
+    "requests>=2.28",
+    "click>=8.1",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+]
+
+[project.scripts]
+slskd-transform = "slskd_transform.cli:cli"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/slskd_transform"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--cov=src/slskd_transform --cov-report=term"
