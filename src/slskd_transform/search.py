@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import time
+from pathlib import Path
 from threading import Thread
 
 import mutagen
@@ -15,10 +16,9 @@ from slskd_transform.utils import write_unfound_songs_to_csv
 
 
 def list_files_with_duration(
-    music_dir: str,
+    music_dir: Path | str,
     *,
     recursive: bool = False,
-    format_filter: str | None = None,
 ) -> list[tuple[str, int]]:
     """Scan a directory for audio files and return (filename_without_ext, duration) tuples."""
     filenames: list[tuple[str, int]] = []
@@ -28,21 +28,25 @@ def list_files_with_duration(
             for file in files:
                 if file.startswith('.'):
                     continue
-                file_without_ext = os.path.splitext(file)[0]
                 file_path = os.path.join(root, file)
                 audio_info = mutagen.File(file_path, easy=True)
+                if audio_info is None or audio_info.info is None:
+                    continue
                 duration = int(audio_info.info.length)
+                file_without_ext = os.path.splitext(file)[0]
                 filenames.append((file_without_ext, duration))
     else:
         for file in os.listdir(music_dir):
             if file.startswith('.'):
                 continue
-            file_path = os.path.join(music_dir, file)
+            file_path = os.path.join(str(music_dir), file)
             if not os.path.isfile(file_path):
                 continue
-            file_without_ext = os.path.splitext(file)[0]
             audio_info = mutagen.File(file_path, easy=True)
+            if audio_info is None or audio_info.info is None:
+                continue
             duration = int(audio_info.info.length)
+            file_without_ext = os.path.splitext(file)[0]
             filenames.append((file_without_ext, duration))
 
     return filenames
@@ -125,9 +129,13 @@ def threaded_search_and_enqueue(
     client: slskd_api.SlskdClient,
 ) -> None:
     """Split songs into chunks and search/enqueue in parallel threads."""
-    num_threads = config.num_threads
+    if not songs_with_duration:
+        return
+    num_threads = min(max(config.num_threads, 1), len(songs_with_duration))
     thread_list: list[Thread] = []
     chunk_size = len(songs_with_duration) // num_threads
+
+    per_thread_unfound: list[list[str]] = [[] for _ in range(num_threads)]
 
     for i in range(num_threads):
         if i == num_threads - 1:
@@ -136,7 +144,7 @@ def threaded_search_and_enqueue(
             chunk = songs_with_duration[i * chunk_size : (i + 1) * chunk_size]
         thread = Thread(
             target=search_and_enqueue,
-            args=(chunk, unfound_songs),
+            args=(chunk, per_thread_unfound[i]),
             kwargs={"config": config, "client": client},
         )
         thread.start()
@@ -145,6 +153,9 @@ def threaded_search_and_enqueue(
 
     for thread in thread_list:
         thread.join()
+
+    for thread_unfound in per_thread_unfound:
+        unfound_songs.extend(thread_unfound)
 
 
 def run_search(config: SlskdConfig) -> None:
@@ -156,7 +167,7 @@ def run_search(config: SlskdConfig) -> None:
     )
 
     songs_with_duration = list_files_with_duration(
-        str(config.music_dir),
+        config.music_dir,
         recursive=config.recursive,
     )
 

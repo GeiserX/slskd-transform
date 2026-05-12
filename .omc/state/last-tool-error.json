@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"cd ~/repos/personal/slskd-transform && git rebase --onto origin/main HEAD~1\",\"description\":\"Rebase only the refactor commit onto main\"}",
+  "error": "Exit code 1\nRebasing (1/1)\rCONFLICT (modify/delete): requirements-test.txt deleted in 60e7877 (feat: refactor into proper CLI with config file and env var support) and modified in HEAD.  Version HEAD of requirements-test.txt left in tree.\nerror: could not apply 60e7877... feat: refactor into proper CLI with config file and env var support\nhint: Resolve all conflicts manually, mark them as resolved with\nhint: \"git add/rm <conflicted_files>\", then run \"git rebase --continue\".\nhint: You can instead...",
+  "timestamp": "2026-05-12T21:28:11.842Z",
+  "retry_count": 1
+}

@@ -1,6 +1,5 @@
 import click
 from pathlib import Path
-from typing import Optional
 
 from slskd_transform.config import load_config
 from slskd_transform.search import run_search

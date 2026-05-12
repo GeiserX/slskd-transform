@@ -53,17 +53,17 @@ def _parse_bool(value: object) -> bool:
 
 @dataclass(frozen=True)
 class SlskdConfig:
-    host: str = "http://127.0.0.1:5030"
-    api_key: str = ""
-    verify_ssl: bool = False
-    music_dir: Path = Path("./music")
-    source_dir: Path = Path("./downloads")
-    destination_dir: Path = Path("./organized")
-    duration_tolerance: int = 15
-    num_threads: int = 5
-    search_timeout: int = 60
-    format: str = "flac"
-    recursive: bool = False
+    host: str
+    api_key: str
+    verify_ssl: bool
+    music_dir: Path
+    source_dir: Path
+    destination_dir: Path
+    duration_tolerance: int
+    num_threads: int
+    search_timeout: int
+    format: str
+    recursive: bool
 
 
 def load_config(
