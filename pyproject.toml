@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "slskd-transform"
-version = "2.0.0"
+version = "2.0.1"
 description = "Bulk-upgrade your music library from lossy to lossless via Soulseek"
 readme = "README.md"
 license = "GPL-3.0-only"
