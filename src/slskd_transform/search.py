@@ -29,7 +29,10 @@ def list_files_with_duration(
                 if file.startswith('.'):
                     continue
                 file_path = os.path.join(root, file)
-                audio_info = mutagen.File(file_path, easy=True)
+                try:
+                    audio_info = mutagen.File(file_path, easy=True)
+                except mutagen.MutagenError:
+                    continue
                 if audio_info is None or audio_info.info is None:
                     continue
                 duration = int(audio_info.info.length)
@@ -42,7 +45,10 @@ def list_files_with_duration(
             file_path = os.path.join(str(music_dir), file)
             if not os.path.isfile(file_path):
                 continue
-            audio_info = mutagen.File(file_path, easy=True)
+            try:
+                audio_info = mutagen.File(file_path, easy=True)
+            except mutagen.MutagenError:
+                continue
             if audio_info is None or audio_info.info is None:
                 continue
             duration = int(audio_info.info.length)
