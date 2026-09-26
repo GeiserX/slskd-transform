@@ -72,3 +72,28 @@ class TestMoveAndRenameFlacFiles:
         with tempfile.TemporaryDirectory() as dest:
             move_and_rename_flac_files([], Path(dest))
             mock_shutil.move.assert_not_called()
+
+
+class TestRunRename:
+    @patch("slskd_transform.rename.extract_metadata")
+    def test_creates_destination_and_moves_files(self, mock_extract):
+        from slskd_transform.config import load_config
+        from slskd_transform.rename import run_rename
+
+        mock_extract.return_value = ("Title", "Artist")
+        with tempfile.TemporaryDirectory() as tmpdir:
+            source = Path(tmpdir, "downloads", "user", "album")
+            source.mkdir(parents=True)
+            Path(source, "01.flac").write_bytes(b"audio")
+            Path(source, "cover.jpg").touch()
+            dest = Path(tmpdir, "organized", "nested")
+
+            config = load_config(
+                config_path=Path("/nonexistent"),
+                cli_overrides={"source_dir": Path(tmpdir, "downloads"), "destination_dir": dest},
+            )
+            run_rename(config)
+
+            assert Path(dest, "Artist - Title.flac").read_bytes() == b"audio"
+            assert not Path(source, "01.flac").exists()
+            assert Path(source, "cover.jpg").exists()

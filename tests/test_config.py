@@ -91,3 +91,39 @@ class TestCliOverrides:
         )
         assert config.host == "http://127.0.0.1:5030"
         assert config.num_threads == 7
+
+
+class TestAutoDiscovery:
+    def test_finds_config_in_working_directory(self, tmp_path, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.setenv("HOME", str(tmp_path / "home"))
+        monkeypatch.delenv("SLSKD_HOST", raising=False)
+        Path(tmp_path, "config.yml").write_text("host: http://cwd:5030\n")
+        config = load_config()
+        assert config.host == "http://cwd:5030"
+
+    def test_finds_config_in_home_directory(self, tmp_path, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.setenv("HOME", str(tmp_path / "home"))
+        monkeypatch.delenv("SLSKD_HOST", raising=False)
+        home_config = tmp_path / "home" / ".config" / "slskd-transform" / "config.yml"
+        home_config.parent.mkdir(parents=True)
+        home_config.write_text("host: http://home:5030\n")
+        config = load_config()
+        assert config.host == "http://home:5030"
+
+    def test_working_directory_wins_over_home(self, tmp_path, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.setenv("HOME", str(tmp_path / "home"))
+        monkeypatch.delenv("SLSKD_HOST", raising=False)
+        Path(tmp_path, "config.yml").write_text("host: http://cwd:5030\n")
+        home_config = tmp_path / "home" / ".config" / "slskd-transform" / "config.yml"
+        home_config.parent.mkdir(parents=True)
+        home_config.write_text("host: http://home:5030\n")
+        assert load_config().host == "http://cwd:5030"
+
+    def test_no_config_anywhere_uses_defaults(self, tmp_path, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.setenv("HOME", str(tmp_path / "home"))
+        monkeypatch.delenv("SLSKD_HOST", raising=False)
+        assert load_config().host == DEFAULTS["host"]
