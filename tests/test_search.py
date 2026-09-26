@@ -10,6 +10,7 @@ from slskd_transform.search import (
     remove_hyphens_and_trim,
     search_and_enqueue,
     threaded_search_and_enqueue,
+    run_search,
 )
 from slskd_transform.config import load_config
 
@@ -170,3 +171,153 @@ class TestThreadedSearchAndEnqueue:
 
         threaded_search_and_enqueue(songs, [], config=config, client=client)
         assert mock_search.call_count == 2
+
+
+def _fake_mutagen_file(path, easy=True):
+    """Stand-in for mutagen.File keyed on the file name."""
+    name = os.path.basename(path)
+    if name.startswith("broken"):
+        import mutagen
+        raise mutagen.MutagenError("corrupt")
+    if name.startswith("notaudio"):
+        return None
+    if name.startswith("noinfo"):
+        audio = MagicMock()
+        audio.info = None
+        return audio
+    audio = MagicMock()
+    audio.info.length = 200.0
+    return audio
+
+
+class TestListFilesSkipsUnreadable:
+    def test_flat_skips_unreadable_and_non_audio(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            for name in ("good.mp3", "broken.mp3", "notaudio.txt", "noinfo.mp3"):
+                Path(tmpdir, name).touch()
+
+            with patch("slskd_transform.search.mutagen.File", side_effect=_fake_mutagen_file):
+                result = list_files_with_duration(Path(tmpdir))
+
+            assert result == [("good", 200)]
+
+    def test_recursive_skips_dotfiles_unreadable_and_non_audio(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            subdir = Path(tmpdir, "album")
+            subdir.mkdir()
+            for name in ("good.mp3", ".hidden.mp3", "broken.mp3", "notaudio.txt", "noinfo.mp3"):
+                Path(subdir, name).touch()
+
+            with patch("slskd_transform.search.mutagen.File", side_effect=_fake_mutagen_file):
+                result = list_files_with_duration(Path(tmpdir), recursive=True)
+
+            assert result == [("good", 200)]
+
+
+class TestSearchAndEnqueueFailures:
+    def _client_with_match(self):
+        client = MagicMock()
+        client.searches.search_text.return_value = {"id": "s1"}
+        client.searches.search_responses.return_value = [
+            {"username": "peer1", "files": [{"filename": "song.flac", "length": 200, "size": 5000}]}
+        ]
+        return client
+
+    @patch("slskd_transform.search.time.sleep")
+    def test_rejected_enqueue_adds_to_unfound(self, mock_sleep):
+        client = self._client_with_match()
+        client.transfers.enqueue.return_value = False
+
+        unfound = []
+        search_and_enqueue([("Artist - Song", 200)], unfound, config=_make_config(), client=client)
+        assert unfound == ["Artist - Song"]
+
+    @patch("slskd_transform.search.time.sleep")
+    def test_http_error_adds_to_unfound_and_continues(self, mock_sleep):
+        import requests
+
+        client = self._client_with_match()
+        client.transfers.enqueue.side_effect = [requests.exceptions.HTTPError("500"), True]
+
+        unfound = []
+        search_and_enqueue(
+            [("First", 200), ("Second", 200)], unfound, config=_make_config(), client=client
+        )
+        assert unfound == ["First"]
+        assert client.transfers.enqueue.call_count == 2
+
+    @patch("slskd_transform.search.time.sleep")
+    def test_searches_with_format_and_waits_for_timeout(self, mock_sleep):
+        client = self._client_with_match()
+        client.transfers.enqueue.return_value = True
+
+        config = _make_config(format="wav", search_timeout=7)
+        search_and_enqueue([("Artist - Song", 200)], [], config=config, client=client)
+        client.searches.search_text.assert_called_once_with(searchText="Artist Song wav")
+        mock_sleep.assert_called_once_with(7)
+        client.transfers.enqueue.assert_called_once_with(
+            username="peer1", files=[{"filename": "song.flac", "size": 5000}]
+        )
+
+
+class TestThreadedSearchEdgeCases:
+    @patch("slskd_transform.search.Thread")
+    def test_empty_list_starts_no_threads(self, mock_thread):
+        threaded_search_and_enqueue([], [], config=_make_config(), client=MagicMock())
+        mock_thread.assert_not_called()
+
+    @patch("slskd_transform.search.time.sleep")
+    def test_collects_unfound_from_every_thread(self, mock_sleep):
+        client = MagicMock()
+        client.searches.search_text.return_value = {"id": "s1"}
+        client.searches.search_responses.return_value = []
+        songs = [(f"Song {i}", 100) for i in range(5)]
+
+        unfound = []
+        threaded_search_and_enqueue(songs, unfound, config=_make_config(num_threads=2), client=client)
+        assert sorted(unfound) == [f"Song {i}" for i in range(5)]
+
+
+class TestRunSearch:
+    @patch("slskd_transform.search.time.sleep")
+    @patch("slskd_transform.search.slskd_api.SlskdClient")
+    def test_writes_csv_of_unfound_songs(self, mock_client_cls, mock_sleep):
+        client = mock_client_cls.return_value
+        client.searches.search_text.return_value = {"id": "s1"}
+        client.searches.search_responses.return_value = []
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            Path(tmpdir, "Artist - Missing.mp3").touch()
+            config = _make_config(music_dir=tmpdir, verify_ssl=True)
+
+            with patch("slskd_transform.search.mutagen.File", side_effect=_fake_mutagen_file):
+                run_search(config)
+
+            mock_client_cls.assert_called_once_with(
+                host="http://test:5030", api_key="test", verify_ssl=True
+            )
+            csv_path = Path(tmpdir, "unfound_songs.csv")
+            assert csv_path.read_text(encoding="utf-8").splitlines() == [
+                "Song Name",
+                "Artist - Missing",
+            ]
+
+    @patch("slskd_transform.search.time.sleep")
+    @patch("slskd_transform.search.slskd_api.SlskdClient")
+    def test_no_csv_when_everything_is_found(self, mock_client_cls, mock_sleep):
+        client = mock_client_cls.return_value
+        client.searches.search_text.return_value = {"id": "s1"}
+        client.searches.search_responses.return_value = [
+            {"username": "peer1", "files": [{"filename": "song.flac", "length": 200, "size": 5000}]}
+        ]
+        client.transfers.enqueue.return_value = True
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            Path(tmpdir, "Artist - Found.mp3").touch()
+            config = _make_config(music_dir=tmpdir)
+
+            with patch("slskd_transform.search.mutagen.File", side_effect=_fake_mutagen_file):
+                run_search(config)
+
+            assert not Path(tmpdir, "unfound_songs.csv").exists()
+            client.transfers.enqueue.assert_called_once()
