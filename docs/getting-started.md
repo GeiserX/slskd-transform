@@ -1,4 +1,4 @@
-# Installation
+# Getting started
 
 <p>
   <a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.10%2B-blue?style=flat-square&logo=python&logoColor=white" alt="Python 3.10+"></a>
@@ -58,19 +58,4 @@ services:
     command: ["search", "--recursive"]
 ```
 
-## Usage examples
-
-```bash
-# Set your API key (or put it in config.yml)
-export SLSKD_API_KEY="your-api-key-here"
-
-# Search for FLAC versions of all files in ./music
-slskd-transform search
-
-# Search recursively in your existing library
-slskd-transform search --music-dir /path/to/library --recursive
-
-# Rename downloaded FLACs using metadata
-slskd-transform rename --source-dir /path/to/downloads --dest-dir /path/to/organized
-```
-
+What to run next is in [Usage](usage.md).

@@ -47,36 +47,4 @@ All settings can be configured via `SLSKD_` prefixed environment variables:
 | `SLSKD_SOURCE_DIR` | Download directory for rename | `./downloads` |
 | `SLSKD_DESTINATION_DIR` | Output directory for rename | `./organized` |
 
-## CLI Reference
-
-```
-slskd-transform [OPTIONS] COMMAND [ARGS]...
-
-Options:
-  -c, --config PATH      Path to config.yml
-  --host TEXT            slskd host URL
-  --api-key TEXT         slskd API key
-  --no-verify-ssl        Disable SSL verification
-  -t, --threads INTEGER  Number of search threads
-  --help                 Show help
-
-Commands:
-  search    Search Soulseek for lossless versions and enqueue downloads
-  rename    Rename downloaded FLACs using metadata
-```
-
-**search options:**
-```
-  -m, --music-dir PATH   Directory with lossy source files
-  -r, --recursive        Scan music directory recursively
-  -f, --format TEXT      Target format (default: flac)
-  --tolerance INTEGER    Duration match tolerance in seconds
-  --timeout INTEGER      Seconds to wait for search results
-```
-
-**rename options:**
-```
-  -s, --source-dir PATH  Directory where slskd downloads land
-  -d, --dest-dir PATH    Destination for renamed files
-```
-
+Every flag is listed in [Usage](usage.md#command-reference).
