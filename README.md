@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/images/banner.svg" alt="slskd-transform banner" width="900"/>
+  <img src="docs/images/banner.svg" alt="slskd-transform" width="900"/>
 </p>
 
 <p align="center">
@@ -14,7 +14,7 @@
   <a href="https://codecov.io/gh/GeiserX/slskd-transform"><img src="https://img.shields.io/codecov/c/github/GeiserX/slskd-transform?style=flat-square" alt="Coverage"></a>
 </p>
 
-**slskd-transform** scans your local music library, searches the [Soulseek](https://www.slsknet.org/) network through [slskd](https://github.com/slskd/slskd) for matching FLAC versions of each track, and automatically enqueues them for download. It matches songs by **audio duration** rather than filenames alone, ensuring you get the correct track every time.
+**slskd-transform** is a command-line tool that scans your music library, searches the [Soulseek](https://www.slsknet.org/) network through [slskd](https://github.com/slskd/slskd) for a FLAC version of each track, and queues the matches for download. It matches by audio duration rather than by file name, so a mislabelled file still finds the right track. Runs with pip or in Docker next to slskd.
 
 ## Features
 
@@ -35,15 +35,16 @@ export SLSKD_API_KEY="your-api-key-here"
 slskd-transform search --music-dir /path/to/library --recursive
 ```
 
-Then `slskd-transform rename --source-dir /path/to/downloads --dest-dir /path/to/organized` once the downloads land.
+When the downloads land, `slskd-transform rename --source-dir /path/to/downloads --dest-dir /path/to/organized` files them by tag. Docker and the config file are in [Getting started](docs/getting-started.md).
 
 ## Documentation
 
-- [Installation](docs/installation.md): prerequisites, pip, development setup, Docker and compose, usage examples
-- [Configuration](docs/configuration.md): config file, environment variables, CLI reference
+- [Getting started](docs/getting-started.md): prerequisites, pip, development setup, Docker and compose
+- [Configuration](docs/configuration.md): config file, environment variables
+- [Usage](docs/usage.md): examples and every command and flag
 - [How it works](docs/how-it-works.md): the search and rename flow, feature details
 
-## Related music tools
+## Related projects
 
 | Project | Description |
 |---------|-------------|
@@ -53,4 +54,4 @@ Then `slskd-transform rename --source-dir /path/to/downloads --dest-dir /path/to
 
 ## License
 
-This project is licensed under the [GPL-3.0 License](LICENSE).
+[GPL-3.0-or-later](LICENSE)
