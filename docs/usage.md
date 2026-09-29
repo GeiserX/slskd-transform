@@ -1,6 +1,6 @@
 # Usage
 
-`slskd-transform` has two commands: `search` finds a FLAC version of each file in your library and queues it in slskd, and `rename` files the finished downloads as `Artist - Title.flac` from their tags.
+`slskd-transform` has two commands: `search` finds a version of each file in your library in the target format (FLAC by default, `--format` to change it) and queues it in slskd, and `rename` files the finished downloads as `Artist - Title.flac` from their tags.
 
 ## Examples
 
