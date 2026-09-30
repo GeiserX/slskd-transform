@@ -36,6 +36,14 @@ Commands:
   rename    Rename downloaded FLACs using metadata
 ```
 
+The options listed above the commands (`--config`, `--host`, `--api-key`, `--no-verify-ssl`, `--threads`) go before the command name, and the command's own options after it:
+
+```bash
+slskd-transform --api-key your-api-key --threads 3 search --music-dir /path/to/library --recursive
+```
+
+Written after `search` or `rename`, they fail with `Error: No such option '--api-key'`.
+
 **search options:**
 ```
   -m, --music-dir PATH   Directory with lossy source files

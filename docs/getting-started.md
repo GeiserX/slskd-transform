@@ -8,7 +8,7 @@
 ## Prerequisites
 
 - **Python 3.10+**
-- **[slskd](https://github.com/slskd/slskd)** running and accessible
+- **[slskd](https://github.com/slskd/slskd)** running and reachable from this machine
 - A valid slskd **API key** (configured in slskd's settings)
 
 ## Install
@@ -17,45 +17,24 @@
 pip install git+https://github.com/GeiserX/slskd-transform.git
 ```
 
-Or for development:
+To install a given release, add its tag: `pip install git+https://github.com/GeiserX/slskd-transform.git@v2.0.1`. The package is not on PyPI, and there is no published Docker image.
+
+## First run
+
+Point it at your library as it is, folders and all; nothing needs copying into a separate folder first.
 
 ```bash
-git clone https://github.com/GeiserX/slskd-transform.git
-cd slskd-transform
-pip install -e ".[dev]"
+export SLSKD_HOST="http://127.0.0.1:5030"
+export SLSKD_API_KEY="your-api-key-here"
+slskd-transform search --music-dir /path/to/library --recursive
 ```
 
-## Docker
+It works when it prints a `Searching for:` line per track and an `Enqueued:` line for each match, and the matches show up in the Downloads page of slskd's web UI. Tracks it could not match are listed in `unfound_songs.csv` in the folder you passed to `--music-dir`. Each search waits 60 seconds for answers, so a large library takes hours; [Configuration](configuration.md) has the settings that change that.
+
+When slskd has finished the downloads, file them by their tags:
 
 ```bash
-docker run --rm \
-  -e SLSKD_HOST=http://slskd:5030 \
-  -e SLSKD_API_KEY=your-key \
-  -v /path/to/lossy:/app/music:ro \
-  -v /path/to/downloads:/app/downloads \
-  ghcr.io/geiserx/slskd-transform:2.0.0 search --recursive
-```
-
-Or in a compose stack alongside slskd:
-
-```yaml
-services:
-  slskd:
-    image: slskd/slskd:0.21.4
-    ports:
-      - "5030:5030"
-    volumes:
-      - ./slskd-data:/app
-
-  slskd-transform:
-    image: ghcr.io/geiserx/slskd-transform:2.0.0
-    environment:
-      SLSKD_HOST: http://slskd:5030
-      SLSKD_API_KEY: your-key
-    volumes:
-      - /path/to/lossy:/app/music:ro
-      - ./slskd-data/downloads:/app/downloads
-    command: ["search", "--recursive"]
+slskd-transform rename --source-dir /path/to/slskd/downloads --dest-dir /path/to/organized
 ```
 
 What to run next is in [Usage](usage.md).

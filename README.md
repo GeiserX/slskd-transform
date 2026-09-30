@@ -14,7 +14,7 @@
   <a href="https://codecov.io/gh/GeiserX/slskd-transform"><img src="https://img.shields.io/codecov/c/github/GeiserX/slskd-transform?style=flat-square" alt="Coverage"></a>
 </p>
 
-**slskd-transform** is a command-line tool that scans your music library, searches the [Soulseek](https://www.slsknet.org/) network through [slskd](https://github.com/slskd/slskd) for a FLAC version of each track, and queues the matches for download. It matches by audio duration rather than by file name, so a mislabelled file still finds the right track. Runs with pip or in Docker next to slskd.
+**slskd-transform** is a command-line tool that scans your music library, searches the [Soulseek](https://www.slsknet.org/) network through [slskd](https://github.com/slskd/slskd) for a FLAC version of each track, and queues the matches for download. It searches by the file name, then queues only a copy whose length is within 15 seconds of your track, so a live cut or an extended mix is not queued. Installs with pip; needs a running slskd.
 
 ## Features
 
@@ -25,7 +25,6 @@
 - Writes tracks it could not find to `unfound_songs.csv`.
 - Renames downloads to `Artist - Title.flac` from their FLAC tags.
 - Takes settings from a config file, `SLSKD_` environment variables or CLI flags.
-- Runs in Docker next to slskd.
 
 ## Quick start
 
@@ -35,14 +34,18 @@ export SLSKD_API_KEY="your-api-key-here"
 slskd-transform search --music-dir /path/to/library --recursive
 ```
 
-When the downloads land, `slskd-transform rename --source-dir /path/to/downloads --dest-dir /path/to/organized` files them by tag. Docker and the config file are in [Getting started](docs/getting-started.md).
+When the downloads land, `slskd-transform rename --source-dir /path/to/downloads --dest-dir /path/to/organized` files them by tag. The config file and the other settings are in [Configuration](https://geiserx.github.io/slskd-transform/configuration/).
 
 ## Documentation
 
-- [Getting started](docs/getting-started.md): prerequisites, pip, development setup, Docker and compose
-- [Configuration](docs/configuration.md): config file, environment variables
-- [Usage](docs/usage.md): examples and every command and flag
-- [How it works](docs/how-it-works.md): the search and rename flow, feature details
+The docs are at [geiserx.github.io/slskd-transform](https://geiserx.github.io/slskd-transform/).
+
+- [Getting started](https://geiserx.github.io/slskd-transform/getting-started/): prerequisites, install, the first run
+- [Usage](https://geiserx.github.io/slskd-transform/usage/): the two commands, examples and every flag
+- [Configuration](https://geiserx.github.io/slskd-transform/configuration/): the config file, environment variables and defaults
+- [How it works](https://geiserx.github.io/slskd-transform/how-it-works/): what `search` and `rename` do, step by step
+- [Troubleshooting](https://geiserx.github.io/slskd-transform/troubleshooting/): the errors people hit and what to put in an issue
+- [Development](https://geiserx.github.io/slskd-transform/development/): running from a checkout, tests, releases
 
 ## Related projects
 
