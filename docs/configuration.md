@@ -8,25 +8,10 @@ CLI flags  >  Environment variables  >  Config file  >  Defaults
 
 ## Config File
 
-Create `config.yml` in your working directory or `~/.config/slskd-transform/config.yml`:
+Create `config.yml` in the directory you run the command from, or at `~/.config/slskd-transform/config.yml`, or pass any path with `--config`. The first file found wins; the two locations are not merged. Keys the tool does not know are ignored without a warning, so check the spelling against this file, the repository's `config.example.yml`:
 
 ```yaml
-# slskd connection
-host: "http://127.0.0.1:5030"
-api_key: "your-api-key"
-verify_ssl: false
-
-# Search settings
-music_dir: "./music"
-duration_tolerance: 15
-num_threads: 5
-search_timeout: 60
-format: "flac"
-recursive: false
-
-# Rename settings
-source_dir: "./downloads"
-destination_dir: "./organized"
+--8<-- "config.example.yml"
 ```
 
 ## Environment Variables
