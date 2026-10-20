@@ -1,7 +1,7 @@
 FROM python:3.12-slim AS builder
 
 WORKDIR /app
-COPY pyproject.toml .
+COPY pyproject.toml README.md ./
 COPY src/ src/
 
 RUN pip install --no-cache-dir --prefix=/install .
@@ -17,10 +17,10 @@ RUN apt-get update \
 WORKDIR /app
 COPY --from=builder /install /usr/local
 
-RUN useradd --create-home appuser
+RUN useradd --create-home appuser \
+ && mkdir -p /app/music /app/downloads /app/organized \
+ && chown appuser /app/music /app/downloads /app/organized
 USER appuser
-
-RUN mkdir -p /app/music /app/downloads /app/organized
 
 ENTRYPOINT ["slskd-transform"]
 CMD ["search"]
