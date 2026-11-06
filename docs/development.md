@@ -30,11 +30,12 @@ The same command runs on every pull request and push to `main` as the `Tests` wo
 
 ## Docs
 
-The site is built by MkDocs from `docs/`:
+The site is built with [Zensical](https://zensical.org/) from `docs/` and `zensical.toml`:
 
 ```bash
 pip install -r docs/requirements-docs.txt
-mkdocs build --strict
+python -m zensical build --clean --strict
+python -I .github/scripts/site-check.py site
 ```
 
-The same strict build runs on every pull request, and a push to `main` that touches the docs deploys the site.
+The `Docs` workflow runs the same two steps on every pull request, and a push to `main` that touches the docs deploys the site. The strict build fails on a broken link or anchor; `site-check.py` fails on what the build lets through: a page left out of the nav, a nav entry for a missing file, a missing image, a link rooted at `/`.

@@ -31,8 +31,7 @@ updates:
 - package-ecosystem: pip
   directory: /docs
   schedule:
-    interval: weekly
-    day: monday
+    interval: monthly
   commit-message:
     prefix: docs
   labels:
